@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.SqlServer;
+using Microsoft.AspNetCore.Identity;
+using Domain.Models;
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Interfaces;
@@ -11,40 +12,47 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-if (builder.Environment.IsDevelopment())
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Register DbContext
+builder.Services.AddDbContext<ClinicaNeoContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Register Identity services
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 {
-    builder.Services.AddDbContext<UserDbContext>(options =>
-        options.UseInMemoryDatabase("UserDb")); // InMemoryDatabase for Dev environment
-}
-else
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    builder.Services.AddDbContext<UserDbContext>(options =>
-        options.UseSqlServer(connectionString)); // Use SQL Server in Production
-                                                 
-}
+    // Example: Ensure unique emails for users
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ClinicaNeoContext>() // Use the DbContext for Identity
+.AddDefaultTokenProviders(); // Optional: for password reset, etc.
+
+// Register application services (repositories, services, etc.)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    // Seed roles and users (make sure to configure the SeedData class)
+    using (var scope = app.Services.CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+        await SeedData.SeedRolesAndUsersAsync(serviceProvider, userManager);
+    }
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

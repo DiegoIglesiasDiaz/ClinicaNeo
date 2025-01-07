@@ -8,22 +8,23 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class AppointmentController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IAppointmentService _AppointmentService;
 
-    public UserController(IUserService userService)
+    public AppointmentController(IAppointmentService AppointmentService)
     {
-        _userService = userService;
+        _AppointmentService = AppointmentService;
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] User newUser)
+    public IActionResult Create([FromBody] Appointment newAppointment)
     {
         try
         {
-            var user = _userService.CreateUser(newUser);
-            return Ok(user);
+            newAppointment.Validate();
+            var Appointment = _AppointmentService.CreateAppointment(newAppointment);
+            return Ok(Appointment);
         }
         catch (Exception ex)
         {
@@ -32,11 +33,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update([FromBody] User updateUser)
+    public IActionResult Update([FromBody] Appointment updateAppointment)
     {
         try
         {
-            _userService.UpdateUser(updateUser);
+            _AppointmentService.UpdateAppointment(updateAppointment);
             return NoContent();
         }
         catch (Exception ex)
@@ -50,8 +51,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = _userService.GetUserById(id);
-            return Ok(user);
+            var Appointment = _AppointmentService.GetAppointmentById(id);
+            return Ok(Appointment);
         }
         catch (Exception ex)
         {
