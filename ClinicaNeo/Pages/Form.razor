@@ -1,0 +1,45 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<MudGrid Justify="Justify.Center">
+    <MudItem>
+        <MudPaper Class="pa-4">
+            <MudForm @ref="form">
+                <MudTextField T="string" Label="Nombre" Required="true" RequiredError="Introduzca su Nombre" @bind-Value="InternalPatient.Name" />
+                <MudTextField T="string" Label="Apellidos" Required="true" RequiredError="Introduzca su Apellidos" @bind-Value="InternalPatient.Surnames" />
+                <MudTextField T="string" Label="Email" Required="true" RequiredError="Introduzca su Email" @bind-Value="InternalPatient.Email"
+                              Validation="@(new EmailAddressAttribute() { ErrorMessage = "Email no válido" })" />
+                <div class="d-flex align-center justify-space-between">
+                    <MudCheckBox T="bool" Required="true" RequiredError="Debes de Aceptar las Condiciones de Uso"
+                                 Label="Aceptas los términos de las Condiciones de Uso" />
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // The property to bind
+    [Parameter]
+    public Patient patient { get; set; }
+
+    private Patient InternalPatient
+    {
+        get => patient;
+        set
+        {
+            if (patient != value)
+            {
+                patient = value;
+                PatientChanged.InvokeAsync(value); // Notify the parent component
+            }
+        }
+    }
+
+    // Event callback for two-way binding
+    [Parameter]
+    public EventCallback<Patient> PatientChanged { get; set; }
+
+    // Reference to the MudForm
+    public MudForm form;
+}

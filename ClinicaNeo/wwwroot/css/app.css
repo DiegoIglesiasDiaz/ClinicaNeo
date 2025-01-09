@@ -101,3 +101,20 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+.articleStepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/*OVERRIDE*/
+
+
+.mud-stepper.mud-stepper__vertical .mud-stepper-content {
+    padding: 0 24px !important;
+}
+
+
+/**/
