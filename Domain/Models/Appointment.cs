@@ -1,38 +1,53 @@
 ﻿using Domain.Enums;
+using Domain.Models;
 using System;
 
 public class Appointment
 {
-    public Guid Id { get; set; } 
-    public Guid DoctorId { get; set; }
-    public Guid PatientId { get; set; }
-    public DateTime AppointmentDate { get; set; } 
+    public int Id { get; set; } 
+    public int PatientId { get; set; }
+    public DateTime Date { get; set; }
+    public TimeSpan StartTime { get; set; }
+    public TimeSpan EndTime { get; set; }
     public AppointmentStatus Status { get; set; } 
     public string? Notes { get; set; }
+    public Patient Patient { get; set; }
 
-    public Appointment(Guid doctorId, Guid patientId, DateTime appointmentDate, string? notes)
+    public Appointment()
     {
-        Id = Guid.NewGuid();
-        DoctorId = doctorId;
+        Patient = new Patient();
+    }
+    public Appointment(DateTime date, Schedule schedule, Patient patient, AppointmentStatus status)
+    {
+        Date = date;
+        StartTime = schedule.StartTime;
+        EndTime = schedule.EndTime;
+        Status = status;
+        Patient = patient;
+    }
+    public Appointment(int patientId, DateTime appointmentDate, string? notes)
+    {
         PatientId = patientId;
-        AppointmentDate = appointmentDate;
+        Date = appointmentDate;
         Status = AppointmentStatus.Scheduled;
         Notes = notes;
+        Patient = new Patient();
         Validate();
     }
     public void Validate()
     {
-        if (DoctorId == Guid.Empty)
-            throw new ArgumentException("DoctorId cannot be empty.");
 
-        if (PatientId == Guid.Empty)
+        if (PatientId == null)
             throw new ArgumentException("PatientId cannot be empty.");
 
-        if (DoctorId == PatientId)
-            throw new ArgumentException("DoctorId and PatientId cannot be the same.");
-
-        if (AppointmentDate < DateTime.Now)
-            throw new ArgumentException("AppointmentDate cannot be in the past.");
+        if (Date < DateTime.Now)
+            throw new ArgumentException("Date cannot be in the past.");
+        if (StartTime == null)
+            throw new ArgumentException("Must declare a Start Time");
+        if (EndTime == null)
+            throw new ArgumentException("Must declare an End Time");
+        if (Status == null)
+            throw new ArgumentException("Must declare Status");
 
     }
 }

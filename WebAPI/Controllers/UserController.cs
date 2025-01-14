@@ -1,8 +1,6 @@
-using Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
-using Domain.Enums;
-using System.Net;
+using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
@@ -10,9 +8,9 @@ namespace WebAPI.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IUserRepository _userService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserRepository userService)
     {
         _userService = userService;
     }
@@ -22,8 +20,9 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = _userService.CreateUser(newUser);
-            return Ok(user);
+            newUser.Validate();
+            var entity = _userService.Add(newUser);
+            return Ok(entity);
         }
         catch (Exception ex)
         {
@@ -31,17 +30,17 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     public IActionResult Update([FromBody] User updateUser)
     {
         try
         {
-            _userService.UpdateUser(updateUser);
+            _userService.Update(updateUser);
             return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);  
+            return BadRequest(ex.Message);
         }
     }
 
@@ -50,7 +49,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = _userService.GetUserById(id);
+            var user = _userService.GetById(id);
             return Ok(user);
         }
         catch (Exception ex)

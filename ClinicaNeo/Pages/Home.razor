@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using System.Globalization
+@using System.Globalization 
 
 <MudPaper>
     <MudStepper @ref=mudStepper Vertical NonLinear OnPreviewInteraction="OnPreviewInteraction" @bind-ActiveIndex="_index" NextButtonText="Siguiente">
@@ -7,9 +7,10 @@
             <MudStep Skippable="false" Title="Selecciona una Cita" Completed="@(selectedDate != null)">
                 <Calendar @bind-SelectedDate="selectedDate" />
             </MudStep>
-            <MudStep Skippable="false" Title="Selecciona una Hora" Completed="_step1Complete">
+            <MudStep Skippable="false" Title="Selecciona una Hora" Completed="@(selectedHour != null)">
+                <ScheduleComponent @bind-HoraSeleccionada="selectedHour" @ref=scheduleComponent />
             </MudStep>
-            <MudStep Skippable="false" Title="Datos Personales" Completed="@(patient.isValid())">
+            <MudStep Skippable="false" Title="Datos Personales" Completed="@(_completed)">
                 <Form @bind-patient="patient" />
             </MudStep>
         </ChildContent>
@@ -30,71 +31,8 @@
 
         </ActionContent>
         <CompletedContent>
-            Thank you for wasting your money on clicks!
+            Reserva completada!
         </CompletedContent>
     </MudStepper>
 </MudPaper>
 
-@code {
-    [Inject]
-    ISnackbar Snackbar { get; set; }
-    MudStepper mudStepper;
-    DateTime? selectedDate;
-    bool _step1Complete = true;
-    Patient patient = new Patient();
-    int _index;
-    bool _completed;
-
-    private async Task OnPreviewInteraction(StepperInteractionEventArgs arg)
-    {
-        if (arg.Action == StepAction.Complete)
-        {
-            // Occurs when clicking next
-            await ControlStepCompletion(arg, _index);
-        }
-        else if (arg.Action == StepAction.Activate)
-        {
-            // Occurs when clicking a step header with the mouse
-            if (arg.StepIndex - 1 == _index || arg.StepIndex < _index)
-            {
-                await ControlStepCompletion(arg, _index);
-            }
-            else
-            {
-                arg.Cancel = true;
-            }
-        }
-    }
-
-    private async Task ControlStepCompletion(StepperInteractionEventArgs arg, int index)
-    {
-        switch (index)
-        {
-            case 0:
-                if (selectedDate == null)
-                {
-                    Snackbar.Add("No has Seleccionado Ninguna Fecha", Severity.Error);
-                    arg.Cancel = true;
-                }
-                break;
-            case 1:
-                if (!_step1Complete)
-                {
-                    Snackbar.Add("No has Seleccionado Ninguna Hora", Severity.Error);
-                    arg.Cancel = true;
-                }
-                break;
-            case 2:
-                if (!patient.isValid() && (arg.StepIndex == index + 1 || arg.Action == StepAction.Complete))
-                {
-                    Snackbar.Add("No has Completado los Datos.", Severity.Error);
-                    arg.Cancel = true;
-                }
-                break;
-        }
-    }
-    private async void OnClickReservar(MudStepper stepper){
-        _completed = true;
-        await stepper.NextStepAsync();
-    }
-}

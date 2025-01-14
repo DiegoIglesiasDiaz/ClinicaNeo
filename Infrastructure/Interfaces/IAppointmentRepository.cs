@@ -2,7 +2,8 @@
 using Domain.Models;
 public interface IAppointmentRepository
 {
-    void Add(Appointment Appointment);
+    Appointment Add(Appointment Appointment);
     void Update(Appointment Appointment);
-    Appointment? GetById(Guid id);
+    Appointment? GetById(int id);
+    Task<bool> IsAppointmentAvailableAsync(Appointment appointment);
 }

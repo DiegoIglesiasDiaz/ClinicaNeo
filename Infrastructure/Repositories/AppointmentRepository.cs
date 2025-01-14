@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -12,10 +13,11 @@ public class AppointmentRepository : IAppointmentRepository
         _context = context;
     }
 
-    public void Add(Appointment Appointment)
+    public Appointment Add(Appointment Appointment)
     {
-        _context.Appointments.Add(Appointment);
+        var entity = _context.Appointments.Add(Appointment);
         _context.SaveChanges();
+        return entity.Entity;
     }
 
     public void Update(Appointment Appointment)
@@ -24,8 +26,15 @@ public class AppointmentRepository : IAppointmentRepository
         _context.SaveChanges();
     }
 
-    public Appointment? GetById(Guid id)
+    public Appointment? GetById(int id)
     {
         return _context.Appointments.SingleOrDefault(u => u.Id == id);
+    }
+
+    public async Task<bool> IsAppointmentAvailableAsync(Appointment appointment)
+    {
+        return  !(await _context.Appointments.AnyAsync(a =>
+                   a.Date == appointment.Date &&
+                   ((a.StartTime < appointment.EndTime && a.EndTime > appointment.StartTime))));
     }
 }

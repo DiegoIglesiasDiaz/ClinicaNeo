@@ -25,7 +25,6 @@ namespace Domain.Models
         }
         public User(string firstName, string lastName, string email, string phoneNumber, string address, string? postcode, DateTime dateOfBirth, Role role)
         {
-            Id = Guid.NewGuid(); // Identity will handle the key generation.
             FirstName = firstName;
             LastName = lastName;
             Email = email;

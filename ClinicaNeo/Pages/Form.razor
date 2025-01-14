@@ -7,6 +7,13 @@
             <MudForm @ref="form">
                 <MudTextField T="string" Label="Nombre" Required="true" RequiredError="Introduzca su Nombre" @bind-Value="InternalPatient.Name" />
                 <MudTextField T="string" Label="Apellidos" Required="true" RequiredError="Introduzca su Apellidos" @bind-Value="InternalPatient.Surnames" />
+                <MudTextField T="string" Label="DNI/NIE" Required="true" HelperText="Formato válido: 12345678A o X1234567L" 
+                              RequiredError="Introduzca un DNI o NIE válido" MaxLength="9" 
+                              Validation="@(new Func<string, string>(ValidateDniNie))" 
+                              @bind-Value="InternalPatient.Dni" />
+                <MudTextField T="string" Label="Teléfono" Required="true" RequiredError="Introduzca su Teléfono" MaxLength="9" 
+                              Validation="@(new Func<string, string>(ValidatePhone))" 
+                              @bind-Value="InternalPatient.Phone" />
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Introduzca su Email" @bind-Value="InternalPatient.Email"
                               Validation="@(new EmailAddressAttribute() { ErrorMessage = "Email no válido" })" />
                 <div class="d-flex align-center justify-space-between">
@@ -17,29 +24,3 @@
         </MudPaper>
     </MudItem>
 </MudGrid>
-
-@code {
-    // The property to bind
-    [Parameter]
-    public Patient patient { get; set; }
-
-    private Patient InternalPatient
-    {
-        get => patient;
-        set
-        {
-            if (patient != value)
-            {
-                patient = value;
-                PatientChanged.InvokeAsync(value); // Notify the parent component
-            }
-        }
-    }
-
-    // Event callback for two-way binding
-    [Parameter]
-    public EventCallback<Patient> PatientChanged { get; set; }
-
-    // Reference to the MudForm
-    public MudForm form;
-}

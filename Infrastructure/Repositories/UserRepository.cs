@@ -12,10 +12,11 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public void Add(User user)
+    public User Add(User user)
     {
-        _context.Users.Add(user);
+       var entity = _context.Users.Add(user);
         _context.SaveChanges();
+        return entity.Entity;
     }
 
     public void Update(User user)

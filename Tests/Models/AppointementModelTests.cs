@@ -62,7 +62,7 @@ public class AppointementModelTests
         var exception = Assert.Throws<ArgumentException>(() =>
             new Appointment(doctorId, patientId, appointmentDate, "Test notes")
         );
-        Assert.Equal("AppointmentDate cannot be in the past.", exception.Message);
+        Assert.Equal("Date cannot be in the past.", exception.Message);
     }
 
     [Fact]
