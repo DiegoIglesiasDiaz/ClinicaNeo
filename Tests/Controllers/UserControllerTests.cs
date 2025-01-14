@@ -1,18 +1,18 @@
-using Application.Interfaces;
+using Domain.Enums;
+using Domain.Models;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebAPI.Controllers;
-using Domain.Models;
-using Domain.Enums;
 namespace Tests.Controllers;
 public class UserControllerTests
 {
-    private readonly Mock<IUserService> _mockUserService;
+    private readonly Mock<IUserRepository> _mockUserService;
     private readonly UserController _controller;
 
     public UserControllerTests()
     {
-        _mockUserService = new Mock<IUserService>();
+        _mockUserService = new Mock<IUserRepository>();
         _controller = new UserController(_mockUserService.Object);
     }
 
@@ -32,7 +32,7 @@ public class UserControllerTests
 
         };
         _mockUserService
-        .Setup(service => service.CreateUser(user))
+        .Setup(service => service.Add(user))
         .Returns(user);
 
         // Act
@@ -64,7 +64,7 @@ public class UserControllerTests
         };
 
         _mockUserService
-             .Setup(service => service.CreateUser(newUser))
+             .Setup(service => service.Add(newUser))
             .Throws(new Exception());
 
         // Act
@@ -91,7 +91,7 @@ public class UserControllerTests
         };
 
         _mockUserService
-            .Setup(service => service.UpdateUser(updateUser))
+            .Setup(service => service.Update(updateUser))
             .Verifiable();
 
         // Act
@@ -122,7 +122,7 @@ public class UserControllerTests
 
 
         _mockUserService
-            .Setup(service => service.UpdateUser(updateUser))
+            .Setup(service => service.Update(updateUser))
             .Throws(new Exception());
 
         // Act
@@ -150,7 +150,7 @@ public class UserControllerTests
 
         };
         _mockUserService
-            .Setup(service => service.GetUserById(userId))
+            .Setup(service => service.GetById(userId))
             .Returns(expectedUser);
 
         // Act
@@ -171,7 +171,7 @@ public class UserControllerTests
         var userId = Guid.NewGuid();
 
         _mockUserService
-            .Setup(service => service.GetUserById(userId))
+            .Setup(service => service.GetById(userId))
             .Throws(new Exception());
 
         // Act

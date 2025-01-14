@@ -1,22 +1,21 @@
-﻿using Xunit;
-using Moq;
+﻿using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using Application.Interfaces;
-using Domain.Models;
-using Domain.Enums;
+using Moq;
 using WebAPI.Controllers;
 
 public class AppointmentControllerTests
 {
-    private readonly Mock<IAppointmentService> _mockAppointmentService;
+    private readonly Mock<IAppointmentRepository> _mockAppointmentService;
+    private readonly Mock<INonWorkingDayRepository> _mockNonWorkingDayService;
+    private readonly Mock<IScheduleRepository> _mockScheduleService;
     private readonly AppointmentController _controller;
 
     public AppointmentControllerTests()
     {
-        _mockAppointmentService = new Mock<IAppointmentService>();
-        _controller = new AppointmentController(_mockAppointmentService.Object);
+        _mockAppointmentService = new Mock<IAppointmentRepository>();
+        _mockNonWorkingDayService = new Mock<INonWorkingDayRepository>();
+        _mockScheduleService = new Mock<IScheduleRepository>();
+        _controller = new AppointmentController(_mockAppointmentService.Object, _mockNonWorkingDayService.Object, _mockScheduleService.Object);
     }
 
     [Fact]
@@ -26,10 +25,10 @@ public class AppointmentControllerTests
         var doctorId = Guid.NewGuid();
         var patientId = Guid.NewGuid();
         var appointmentDate = DateTime.UtcNow.AddDays(1); // Future appointment
-        var newAppointment = new Appointment(doctorId, patientId, appointmentDate, "Test notes");
+        var newAppointment = new Appointment();
 
         _mockAppointmentService
-            .Setup(service => service.CreateAppointment(It.IsAny<Appointment>()))
+            .Setup(service => service.Add(It.IsAny<Appointment>()))
             .Returns(newAppointment);
 
         // Act
@@ -46,8 +45,8 @@ public class AppointmentControllerTests
     public void Create_ReturnsBadRequest_WhenAppointmentValidationFails()
     {
         // Arrange: Appointment with invalid DoctorId
-        var newAppointment = new Appointment(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.AddDays(1), "Test notes");
-        newAppointment.DoctorId = Guid.Empty;
+        var newAppointment = new Appointment();
+
         // Act
         var result = _controller.Create(newAppointment);
 
@@ -60,10 +59,10 @@ public class AppointmentControllerTests
     public void Create_ReturnsBadRequest_WhenExceptionIsThrown()
     {
         // Arrange
-        var newAppointment = new Appointment(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.AddDays(1), "Test notes");
+        var newAppointment = new Appointment();
 
         _mockAppointmentService
-            .Setup(service => service.CreateAppointment(It.IsAny<Appointment>()))
+            .Setup(service => service.Add(It.IsAny<Appointment>()))
             .Throws(new Exception("Error creating appointment"));
 
         // Act
@@ -78,10 +77,10 @@ public class AppointmentControllerTests
     public void Update_ReturnsNoContent_WhenAppointmentIsUpdated()
     {
         // Arrange
-        var updateAppointment = new Appointment(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.AddDays(1), "Updated notes");
+        var updateAppointment = new Appointment();
 
         _mockAppointmentService
-            .Setup(service => service.UpdateAppointment(It.IsAny<Appointment>()));
+            .Setup(service => service.Update(It.IsAny<Appointment>()));
 
         // Act
         var result = _controller.Update(updateAppointment);
@@ -94,10 +93,10 @@ public class AppointmentControllerTests
     public void Update_ReturnsBadRequest_WhenExceptionIsThrown()
     {
         // Arrange
-        var updateAppointment = new Appointment(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.AddDays(1), "Updated notes");
+        var updateAppointment = new Appointment();
 
         _mockAppointmentService
-            .Setup(service => service.UpdateAppointment(It.IsAny<Appointment>()))
+            .Setup(service => service.Update(It.IsAny<Appointment>()))
             .Throws(new Exception("Error updating appointment"));
 
         // Act
@@ -113,10 +112,10 @@ public class AppointmentControllerTests
     {
         // Arrange
 
-        var appointment = new Appointment(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow.AddDays(1), "Test appointment");
+        var appointment = new Appointment();
 
         _mockAppointmentService
-            .Setup(service => service.GetAppointmentById(appointment.Id))
+            .Setup(service => service.GetById(appointment.Id))
             .Returns(appointment);
 
         // Act
@@ -131,15 +130,14 @@ public class AppointmentControllerTests
     [Fact]
     public void Get_ReturnsNotFound_WhenAppointmentIsNotFound()
     {
-        // Arrange
-        var appointmentId = Guid.NewGuid();
+
 
         _mockAppointmentService
-            .Setup(service => service.GetAppointmentById(It.IsAny<Guid>()))
+            .Setup(service => service.GetById(It.IsAny<int>()))
             .Throws(new Exception("Appointment not found"));
 
         // Act
-        var result = _controller.Get(appointmentId);
+        var result = _controller.Get(1);
 
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
