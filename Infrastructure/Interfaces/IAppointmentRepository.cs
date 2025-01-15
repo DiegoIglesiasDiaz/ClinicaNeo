@@ -6,4 +6,5 @@ public interface IAppointmentRepository
     void Update(Appointment Appointment);
     Appointment? GetById(int id);
     Task<bool> IsAppointmentAvailableAsync(Appointment appointment);
+    Task<List<DateTime>> GetBookedDatesAsync();
 }

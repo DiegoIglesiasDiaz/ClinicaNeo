@@ -59,11 +59,11 @@ public class ScheduleController : ControllerBase
         }
     }
     [HttpGet("GetActiveByDate")]
-    public async Task<IActionResult> GetActiveSchedulesByDateAsync(DateTime date)
+    public async Task<IActionResult> GetAvailableSchedulesForSpecificDateAsync(DateTime date)
     {
         try
         {
-            var Schedules = await _ScheduleService.GetActiveSchedulesByDateAsync(date);
+            var Schedules = await _ScheduleService.GetAvailableSchedulesForSpecificDateAsync(date);
             return Ok(Schedules);
         }
         catch (Exception ex)

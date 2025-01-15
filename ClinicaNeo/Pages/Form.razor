@@ -3,7 +3,7 @@
 
 <MudGrid Justify="Justify.Center">
     <MudItem>
-        <MudPaper Class="pa-4">
+        <MudPaper Class="pa-4" Elevation="5">
             <MudForm @ref="form">
                 <MudTextField T="string" Label="Nombre" Required="true" RequiredError="Introduzca su Nombre" @bind-Value="InternalPatient.Name" />
                 <MudTextField T="string" Label="Apellidos" Required="true" RequiredError="Introduzca su Apellidos" @bind-Value="InternalPatient.Surnames" />
@@ -18,7 +18,7 @@
                               Validation="@(new EmailAddressAttribute() { ErrorMessage = "Email no válido" })" />
                 <div class="d-flex align-center justify-space-between">
                     <MudCheckBox T="bool" Required="true" RequiredError="Debes de Aceptar las Condiciones de Uso"
-                                 Label="Aceptas los términos de las Condiciones de Uso" />
+                                 Label="¿Aceptas los términos y condiciones de uso?" @bind-Value="InternalConditionsCheckbox" />
                 </div>
             </MudForm>
         </MudPaper>

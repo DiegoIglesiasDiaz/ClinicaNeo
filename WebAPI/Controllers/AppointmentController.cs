@@ -77,7 +77,19 @@ public class AppointmentController : ControllerBase
             return NotFound(ex.Message);
         }
     }
-
+    [HttpGet("BookedDates")]
+    public async Task<IActionResult> GetBookedDatesAsync()
+    {
+        try
+        {
+            var Appointment = await _AppointmentService.GetBookedDatesAsync();
+            return Ok(Appointment);
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
     private async Task<bool> ValidateAppointmentAsync(Appointment appointment)
     {
         if (await _NonWorkingDayRepository.IsNonWorkingDayAsync(appointment.Date))

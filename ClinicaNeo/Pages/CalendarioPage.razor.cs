@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 
 namespace ClinicaNeo.Pages
 {
-    public partial class Calendar
+    public partial class CalendarioPage
     {
         [Inject]
         public HttpClient _httpClient { get; set; }

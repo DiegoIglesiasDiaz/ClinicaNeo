@@ -30,6 +30,23 @@ namespace ClinicaNeo.Pages
 
         // Reference to the MudForm
         public MudForm form;
+        [Parameter]
+        public bool ConditionsCheckbox {  get; set; }
+        [Parameter]
+        public EventCallback<bool> ConditionsCheckboxChanged { get; set; }
+
+        private bool InternalConditionsCheckbox
+        {
+            get => ConditionsCheckbox;
+            set
+            {
+                if (ConditionsCheckbox != value)
+                {
+                    ConditionsCheckbox = value;
+                    ConditionsCheckboxChanged.InvokeAsync(value); // Notify the parent component
+                }
+            }
+        }
 
         private string ValidateDniNie(string input)
         {

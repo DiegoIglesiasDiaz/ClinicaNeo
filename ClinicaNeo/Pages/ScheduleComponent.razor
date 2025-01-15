@@ -5,7 +5,7 @@
         {
             <MudButton OnClick="() => SeleccionarHora(hora)" 
                        Class="m-2"
-                       Color="@(hora == internalHoraSeleccionada ? Color.Primary : Color.Default)">
+                       Color="@(hora == internalHoraSeleccionada ? Color.Tertiary : Color.Primary)">
                 @hora.StartTime.ToString("hh\\:mm") -  @hora.EndTime.ToString("hh\\:mm")
             </MudButton>
         }

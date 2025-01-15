@@ -20,7 +20,7 @@ namespace ClinicaNeo.Pages
         Patient patient = new Patient();
         int _index;
         bool _completed;
-
+        bool ConditionsCheckbox;
         private async Task OnPreviewInteraction(StepperInteractionEventArgs arg)
         {
             if (arg.Action == StepAction.Complete)
@@ -77,10 +77,18 @@ namespace ClinicaNeo.Pages
         {
             if(patient.isValid() && selectedDate != null && selectedHour != null)
             {
-                var newAppointment = new Appointment((DateTime)selectedDate, selectedHour, patient, Domain.Enums.AppointmentStatus.Scheduled);
-                var response = await _httpClient.PostAsJsonAsync<Appointment>("api/Appointment", newAppointment);
-                _completed = true;
-                await stepper.NextStepAsync();
+                if (ConditionsCheckbox)
+                {
+                    var newAppointment = new Appointment((DateTime)selectedDate, selectedHour, patient, Domain.Enums.AppointmentStatus.Scheduled);
+                    var response = await _httpClient.PostAsJsonAsync<Appointment>("api/Appointment", newAppointment);
+                    _completed = true;
+                    await stepper.NextStepAsync();
+                }
+                else
+                {
+                    Snackbar.Add("Debes de aceptar los términos y condiciones de uso.", Severity.Error);
+                }
+                
             }
             else
             {

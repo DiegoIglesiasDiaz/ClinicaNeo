@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.Enums;
+using Domain.Models;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories;
@@ -28,18 +29,32 @@ public class ScheduleRepository : IScheduleRepository
     {
         return _context.Schedules.ToList();
     }
-    public async Task<List<Schedule>> GetActiveSchedulesByDateAsync(DateTime date)
+    public async Task<List<Schedule>> GetAvailableSchedulesForSpecificDateAsync(DateTime date)
     {
+        // Using the AppointmentStatus.Cancelled.ToString() for the cancelled status
+        var appointmentStatusCancelled = AppointmentStatus.Cancelled.ToString();
 
-        return _context.Schedules
-         .FromSqlInterpolated($@"
+        var availableSchedules = await _context.Schedules
+            .FromSqlRaw(@"
             SELECT s.*, a.Date
             FROM [dbo].[Schedules] s
-            left join Appointments a on a.StartTime = s.StartTime and a.EndTime = s.EndTime and a.Date = {date.ToString("yyyyMMdd")}
-            where IsActive = 1 and a.Date is null")
-         .AsNoTracking()
-         .ToList();
+            LEFT JOIN Appointments a 
+                ON a.Date = {0}
+                AND a.Status <> {1}  -- Using the AppointmentStatus.Cancelled enum value
+                AND (
+                    (a.StartTime < s.EndTime AND a.EndTime > s.StartTime)
+                    OR (s.StartTime < a.EndTime AND s.EndTime > a.StartTime)
+                )
+            WHERE s.IsActive = 1
+                AND (a.Date IS NULL OR a.Status = {1})
+            ORDER BY s.StartTime;
+        ", date.ToString("yyyy-MM-dd"), appointmentStatusCancelled)  // Bind the enum value as a parameter
+            .AsNoTracking()
+            .ToListAsync();
+
+        return availableSchedules;
     }
+
     public async Task<List<Schedule>> GetActiveSchedulesAsync()
     {
 

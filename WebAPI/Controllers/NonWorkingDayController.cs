@@ -7,11 +7,11 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class NonWorkingDayRepositoryController : ControllerBase
+public class NonWorkingDayController : ControllerBase
 {
     private readonly INonWorkingDayRepository _NonWorkingDayService;
 
-    public NonWorkingDayRepositoryController(INonWorkingDayRepository NonWorkingDayRepositoryService)
+    public NonWorkingDayController(INonWorkingDayRepository NonWorkingDayRepositoryService)
     {
        _NonWorkingDayService = NonWorkingDayRepositoryService;
     }

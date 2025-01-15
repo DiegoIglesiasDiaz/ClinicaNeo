@@ -4,6 +4,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
