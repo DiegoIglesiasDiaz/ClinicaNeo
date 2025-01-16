@@ -1,59 +1,97 @@
-using Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
+using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.JSInterop;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using static System.Net.WebRequestMethods;
 
 namespace WebAPI.Controllers;
 
 [ApiController]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
+
+
 public class UserController : ControllerBase
 {
-    private readonly IUserService _userService;
+    private readonly IUserRepository _userService;
+    private readonly SignInManager<User> _signInManager;
 
-    public UserController(IUserService userService)
+    public UserController(IUserRepository userService, SignInManager<User> signInManager )
     {
         _userService = userService;
+        _signInManager = signInManager;
     }
-
     [HttpPost]
-    public IActionResult Create([FromBody] User newUser)
+    public async Task<IActionResult> Login([FromBody] LoginDto user)
     {
         try
         {
-            var user = _userService.CreateUser(newUser.FirstName, newUser.LastName, newUser.Email);
-            return Ok(user);
+            if ((await _signInManager.PasswordSignInAsync(user.Username, user.Password, true, false)).Succeeded)
+            {
+                return Ok("Login success");
+            }
+            else
+            {
+                return BadRequest("Login failed");
+            }
+
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest("Error: " + ex.Message);
         }
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Update(Guid id, [FromBody] User updateUser)
-    {
-        try
-        {
-            _userService.UpdateUser(id, updateUser.FirstName, updateUser.LastName, updateUser.Email);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);  
-        }
-    }
 
-    [HttpGet("{id}")]
-    public IActionResult Get(Guid id)
-    {
-        try
-        {
-            var user = _userService.GetUserById(id);
-            return Ok(user);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
+
+
+
+    //[HttpPost]
+    //public IActionResult Create([FromBody] User newUser)
+    //{
+    //    try
+    //    {
+    //        newUser.Validate();
+    //        var entity = _userService.Add(newUser);
+    //        return Ok(entity);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
+
+    //[HttpPut]
+    //public IActionResult Update([FromBody] User updateUser)
+    //{
+    //    try
+    //    {
+    //        _userService.Update(updateUser);
+    //        return NoContent();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest(ex.Message);
+    //    }
+    //}
+
+    //[HttpGet("{id}")]
+    //public IActionResult Get(Guid id)
+    //{
+    //    try
+    //    {
+    //        var user = _userService.GetById(id);
+    //        return Ok(user);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return NotFound(ex.Message);
+    //    }
+    //}
 }

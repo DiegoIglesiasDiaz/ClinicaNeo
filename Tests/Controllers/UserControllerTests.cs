@@ -1,17 +1,18 @@
-using Application.Interfaces;
+using Domain.Enums;
+using Domain.Models;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebAPI.Controllers;
-using Domain.Models;
 namespace Tests.Controllers;
 public class UserControllerTests
 {
-    private readonly Mock<IUserService> _mockUserService;
+    private readonly Mock<IUserRepository> _mockUserService;
     private readonly UserController _controller;
 
     public UserControllerTests()
     {
-        _mockUserService = new Mock<IUserService>();
+        _mockUserService = new Mock<IUserRepository>();
         _controller = new UserController(_mockUserService.Object);
     }
 
@@ -19,11 +20,20 @@ public class UserControllerTests
     public void Create_ReturnsOkResult_WhenUserIsCreated()
     {
         // Arrange
-        var user = new User("Diego", "Iglesias", "Diego.Iglesias@example.com");
+        var user = new User
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            FirstName = "Admin",
+            LastName = "User",
+            Role = Role.Admin,
+            Address = " C/ Avenida España",
+            PhoneNumber = "123-456-7890",
 
+        };
         _mockUserService
-            .Setup(service => service.CreateUser(user.FirstName, user.LastName, user.Email))
-            .Returns(user);
+        .Setup(service => service.Add(user))
+        .Returns(user);
 
         // Act
         var result = _controller.Create(user);
@@ -41,10 +51,20 @@ public class UserControllerTests
     public void Create_ReturnsBadRequest_WhenExceptionIsThrown()
     {
         // Arrange
-        var newUser = new User("Diego", "Iglesias", "Diego.Iglesias@example.com");
+        var newUser = new User
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            FirstName = "Admin",
+            LastName = "User",
+            Role = Role.Admin,
+            Address = " C/ Avenida España",
+            PhoneNumber = "123-456-7890",
+
+        };
 
         _mockUserService
-            .Setup(service => service.CreateUser(newUser.FirstName, newUser.LastName, newUser.Email))
+             .Setup(service => service.Add(newUser))
             .Throws(new Exception());
 
         // Act
@@ -58,18 +78,28 @@ public class UserControllerTests
     public void Update_ReturnsNoContent_WhenUserIsUpdated()
     {
         // Arrange
-        var updateUser = new User("Diego", "Iglesias", "Diego.Iglesias@example.com"); 
+        var updateUser = new User
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            FirstName = "Admin",
+            LastName = "User",
+            Role = Role.Admin,
+            Address = " C/ Avenida España",
+            PhoneNumber = "123-456-7890",
+
+        };
 
         _mockUserService
-            .Setup(service => service.UpdateUser(updateUser.Id, updateUser.FirstName, updateUser.LastName, updateUser.Email))
+            .Setup(service => service.Update(updateUser))
             .Verifiable();
 
         // Act
-        var result = _controller.Update(updateUser.Id, updateUser); 
+        var result = _controller.Update(updateUser);
 
         // Assert
-        Assert.IsType<NoContentResult>(result);  
-        _mockUserService.Verify(); 
+        Assert.IsType<NoContentResult>(result);
+        _mockUserService.Verify();
     }
 
 
@@ -77,19 +107,29 @@ public class UserControllerTests
     public void Update_ReturnsBadRequest_WhenExceptionIsThrown()
     {
         // Arrange
-        var updateUser = new User("Diego", "Iglesias", "Diego.Iglesias@example.com");
-        var id = updateUser.Id; 
+        var updateUser = new User
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            FirstName = "Admin",
+            LastName = "User",
+            Role = Role.Admin,
+            Address = " C/ Avenida España",
+            PhoneNumber = "123-456-7890",
 
-  
+        };
+        var id = updateUser.Id;
+
+
         _mockUserService
-            .Setup(service => service.UpdateUser(id, updateUser.FirstName, updateUser.LastName, updateUser.Email))
+            .Setup(service => service.Update(updateUser))
             .Throws(new Exception());
 
         // Act
-        var result = _controller.Update(id, updateUser); 
+        var result = _controller.Update(updateUser);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result); 
+        Assert.IsType<BadRequestObjectResult>(result);
 
     }
 
@@ -98,9 +138,19 @@ public class UserControllerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var expectedUser = new User("Diego", "Iglesias", "Diego.Iglesias@example.com");
+        var expectedUser = new User
+        {
+            UserName = "admin@example.com",
+            Email = "admin@example.com",
+            FirstName = "Admin",
+            LastName = "User",
+            Role = Role.Admin,
+            Address = " C/ Avenida España",
+            PhoneNumber = "123-456-7890",
+
+        };
         _mockUserService
-            .Setup(service => service.GetUserById(userId))
+            .Setup(service => service.GetById(userId))
             .Returns(expectedUser);
 
         // Act
@@ -121,7 +171,7 @@ public class UserControllerTests
         var userId = Guid.NewGuid();
 
         _mockUserService
-            .Setup(service => service.GetUserById(userId))
+            .Setup(service => service.GetById(userId))
             .Throws(new Exception());
 
         // Act

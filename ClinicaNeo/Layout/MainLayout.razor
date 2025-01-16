@@ -1,0 +1,179 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="button-container">
+        @if (showMudPickerTheme){
+            <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
+            <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+        }
+       
+        <MudButton Class="back-toggle-button" StartIcon="@Icons.Material.Filled.ArrowBack" Href="https://centrodetecnicasnaturalesneo.com/">
+            Volver
+        </MudButton>
+
+        <MudButton OnClick="ToggleDrawer" Class="drawer-toggle-button" Variant="Variant.Text">
+            @if (isAuthenticated)
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Menu" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Lock" />
+            }
+
+        </MudButton>
+    </div>
+
+    <MudDrawer @bind-Open="isDrawerOpen" Anchor="Anchor.Left" Elevation="4" Variant="DrawerVariant.Temporary">
+        @if (!isAuthenticated)
+        {
+            <!-- Show login form if the user is not authenticated -->
+            <div style="padding:20px">
+                <MudText Typo="Typo.h6" Align="Align.Center">Iniciar Sesión</MudText>
+
+                <MudForm @ref="loginForm" Class="login-form">
+                    <MudTextField Label="Usuario" @bind-Value="user.Username" Variant="Variant.Text" InputType="InputType.Email" />
+                    <MudTextField Label="Contraseña" @bind-Value="user.Password" Variant="Variant.Text" InputType="InputType.Password" />
+                    <br />
+                    <MudButton OnClick="HandleLogin" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Login">Iniciar Sesión</MudButton>
+                </MudForm>
+            </div>
+        }
+        else
+        {
+            <!-- Show the navigation menu if the user is authenticated -->
+            <div class="drawer-content">
+                <MudNavMenu Class="large-nav-menu">
+                    <MudNavLink Href="/" Match="NavLinkMatch.All" Class="large-nav-link">Reservar Cita</MudNavLink>
+                    <MudNavLink Href="/Calendario" Match="NavLinkMatch.All" Class="large-nav-link">Calendario</MudNavLink>
+                    <MudNavLink Href="/administrar-datos" Match="NavLinkMatch.All" Class="large-nav-link">Administrar Datos</MudNavLink>
+                </MudNavMenu>
+
+            </div>
+            <div class="logout-button">
+                <MudButton OnClick="HandleLogout" Color="Color.Primary" StartIcon="@Icons.Material.Filled.ExitToApp">Cerrar Sesión</MudButton>
+            </div>
+        }
+    </MudDrawer>
+
+
+    <main>
+        <article class="articleStepper">
+            @Body
+        </article>
+    </main>
+</div>
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudThemeProvider Theme="_themeManager.Theme" />
+
+@code {
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme(){
+            Theme = new()
+            {
+                PaletteLight = new PaletteLight
+                {
+                    Primary = "#5d3928ff",
+                    Secondary = "#FFFFFF",
+                    Info = "#64a7e2",
+                    Success = "#2ECC40",
+                    Warning = "#FFC107",
+                    Error = "#FF0000",
+                    Background = "#5d3928ff",
+                    Surface = "#FFFFFF",
+                    TextPrimary = "#5d3928ff",
+                    TextSecondary = "#5d3928ff",
+                }
+            }
+    };
+
+    [Inject] private ISnackbar snackbar { get; set; }
+    [Inject] private HttpClient httpClient { get; set; }
+    [Inject] private AuthenticationStateProvider authenticationStateProvider { get; set; }
+    [Inject] private NavigationManager navigation { get; set; }
+
+
+    private bool isDrawerOpen = false;
+    private bool isAuthenticated = false;
+    private bool showMudPickerTheme = false;
+    private LoginDto user = new LoginDto();
+    private MudForm loginForm;
+
+    private void ToggleDrawer()
+    {
+        isDrawerOpen = !isDrawerOpen;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAuthenticated = user.Identity.IsAuthenticated;
+    }
+    // Change the return type to Task and make the method async
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
+        {
+            snackbar.Add("El usuario o la contraseña no puede estar vacío", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            // Assuming you have an API endpoint that processes the login
+            var result = await httpClient.PostAsJsonAsync("api/User", user);
+
+            if (result.IsSuccessStatusCode)
+            {
+                // Handle successful login here
+                snackbar.Add("¡Bienvenido!", Severity.Success);
+                isAuthenticated = true;
+            }
+            else
+            {
+                // Handle error from server (invalid credentials, etc.)
+                snackbar.Add("Credenciales inválidas", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle errors like network failure
+            snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+    private async Task HandleLogout()
+    {
+        // await authenticationStateProvider.LogoutAsync();
+        isAuthenticated = false;
+        snackbar.Add("Has cerrado sesión correctamente.", Severity.Info);
+
+        navigation.NavigateTo("/");
+    }
+
+
+
+
+#region MUdBlazorPick Theme
+    public bool _themeManagerOpen = false;
+
+    void OpenThemeManager(bool value)
+    {
+        _themeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+#endregion
+}

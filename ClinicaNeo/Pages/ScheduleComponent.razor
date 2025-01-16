@@ -1,0 +1,15 @@
+﻿@if (horasDisponibles is not null && horasDisponibles.Count > 0)
+{
+    <div>
+        @foreach (var hora in horasDisponibles)
+        {
+            <MudButton OnClick="() => SeleccionarHora(hora)" 
+                       Class="m-2"
+                       Color="@(hora == internalHoraSeleccionada ? Color.Tertiary : Color.Primary)">
+                @hora.StartTime.ToString("hh\\:mm") -  @hora.EndTime.ToString("hh\\:mm")
+            </MudButton>
+        }
+    </div>
+}else{
+    <p>Cargando Citas...</p>
+}
