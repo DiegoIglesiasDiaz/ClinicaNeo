@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5080", // Set to your desired HTTPS port
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "DOTNET_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:5082",
+        "DOTNET_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:5081"
+      }
+    }
+  }
+}

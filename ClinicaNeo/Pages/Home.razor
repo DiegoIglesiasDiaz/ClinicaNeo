@@ -1,0 +1,38 @@
+﻿@page "/"
+@using System.Globalization 
+
+<MudPaper>
+    <MudStepper @ref=mudStepper Vertical NonLinear OnPreviewInteraction="OnPreviewInteraction" @bind-ActiveIndex="_index" NextButtonText="Siguiente">
+        <ChildContent>
+            <MudStep Skippable="false" Title="Selecciona una Cita" Completed="@(selectedDate != null)">
+                <Calendar @bind-SelectedDate="selectedDate" />
+            </MudStep>
+            <MudStep Skippable="false" Title="Selecciona una Hora" Completed="@(selectedHour != null)">
+                <ScheduleComponent @bind-HoraSeleccionada="selectedHour" @ref=scheduleComponent />
+            </MudStep>
+            <MudStep Skippable="false" Title="Datos Personales" Completed="@(_completed)">
+                <Form @bind-patient="patient" @bind-ConditionsCheckbox="ConditionsCheckbox" />
+            </MudStep>
+        </ChildContent>
+        <ActionContent Context="stepper">
+            @if (!_completed) {
+
+
+                <MudButton OnClick="@(() => stepper.PreviousStepAsync())" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Disabled="@(_index <= 0)"> ATRAS </MudButton>
+                <MudSpacer />
+                @if (_index == 2) {
+                    <MudButton OnClick="@(() => OnClickReservar(stepper))" EndIcon="@Icons.Material.Filled.Check" Color="Color.Primary"> RESERVAR </MudButton>
+                }
+                else {
+                    <MudButton OnClick="@(() => stepper.NextStepAsync())" EndIcon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary"> SIGUIENTE </MudButton>
+                }
+            }
+
+
+        </ActionContent>
+        <CompletedContent>
+            Reserva completada!
+        </CompletedContent>
+    </MudStepper>
+</MudPaper>
+

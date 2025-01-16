@@ -1,0 +1,4 @@
+﻿<MudStack AlignItems="AlignItems.Center">
+    <MudDatePicker FixYear="DateTime.Now.Year" IsDateDisabledFunc="IsDateDisabledFunc" PickerVariant="PickerVariant.Static"Margin="Margin.Dense" Required="true" MinDate="DateTime.Today.AddDays(1)" MaxDate="DateTime.Today.AddMonths(1) " DisplayMonths="displayMonths" @bind-Date="internalSelectedDate" />
+</MudStack>
+

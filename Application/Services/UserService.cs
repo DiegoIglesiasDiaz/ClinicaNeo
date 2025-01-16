@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces;
 using Infrastructure.Interfaces;
 using Domain.Models;
+using Domain.Enums;
+using Infrastructure.Repositories;
 
 namespace Application.Services;
 
@@ -13,21 +15,18 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public User CreateUser(string firstName, string lastName, string email)
+    public User CreateUser(User user)
     {
-        var user = new User(firstName, lastName, email);
         _userRepository.Add(user);
         return user;
     }
 
-    public void UpdateUser(Guid id, string firstName, string lastName, string email)
+    public void UpdateUser(User user)
     {
-        var user = _userRepository.GetById(id);
-        if (user == null)
+        if (_userRepository.GetById(user.Id) == null)
         {
             throw new KeyNotFoundException("User not found");
         }
-        user.Update(firstName, lastName, email);
         _userRepository.Update(user);
 
     }
