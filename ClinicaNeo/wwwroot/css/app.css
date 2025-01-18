@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #5d3928ff;
-    --secondary-color: #FFFFFF;
+    --primary-color: #FFFFFF;
+    --secondary-color: #5d3928ff;
 }
 
 
@@ -23,7 +23,10 @@ h1:focus {
 a, .btn-link {
     color: #0071c1;
 }
-
+.mud-paper {
+    border: 7px solid var(--secondary-color) !important;
+    border-radius: 20px !important;
+}
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -31,7 +34,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1remvar(--secondary-color), 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem var(--secondary-color), 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -148,6 +151,12 @@ code {
     color: #61ce70,
 }
 
+--mud-default-borderradius{
+
+}
+--mud-palette-action-default-hover {
+    color: var(--primary-color) !important,
+}
 --mud-palette-info {
     color: #64a7e2,
 }
@@ -199,16 +208,18 @@ code {
 .mud-stepper.mud-stepper__vertical .mud-stepper-content {
     border-inline-start: 2px solid var(--primary-color) !important;
 }
-
+.mud-button {
+    border-radius: 10px !important;
+}
 .mud-button-text.mud-button-text-tertiary {
-    background: var(--primary-color) !important;
-    color:var(--secondary-color) !important;
+    background: var(--secondary-color) !important;
+    color: var(--primary-color) !important;
 }
 
 .mud-button-text.mud-button-text-primary:hover, .mud-button-text.mud-button-text-primary:active,
 .mud-button-text.mud-button-text-primary:focus-visible {
-    background: var(--primary-color) !important;
-    color:var(--secondary-color) !important;
+    background: var(--secondary-color) !important;
+    color:var(--primary-color) !important;
 }
 
 
@@ -302,21 +313,17 @@ code {
     background-color: transparent !important;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    border: 2px solidvar(--secondary-color) !important;
+    border: 2px solid var(--secondary-color) !important;
 }
 
-    .drawer-toggle-button:hover, .back-toggle-button:hover, .drawer-toggle-button:active, .back-toggle-button:active,
-    .drawer-toggle-button:focus-visible, .back-toggle-button:focus-visible {
-        color: var(--primary-color) !important;
-        background-color:var(--secondary-color) !important;
-        border: 2px solid var(--primary-color) !important;
-    }
+.drawer-toggle-button:hover, .back-toggle-button:hover, .drawer-toggle-button:active, .back-toggle-button:active,
+.drawer-toggle-button:focus-visible, .back-toggle-button:focus-visible {
+    color: var(--primary-color) !important;
+    background-color:var(--secondary-color) !important;
+}
 /**/
 
 /* DRAWER */
-.mud-drawer-content {
-    background:var(--secondary-color) !important;
-}
 
 .drawer-content {
     flex: 1;
@@ -330,30 +337,33 @@ code {
     text-align: center;
 }
 
-.mud-nav-item {
-    color: var(--primary-color) !important;
-}
-
-.mud-navmenu.mud-navmenu-default .mud-nav-link.active:not(.mud-nav-link-disabled) {
-    color:var(--secondary-color) !important;
-    background-color: var(--primary-color) !important
-}
 
 .large-nav-menu {
     padding: 10px; /* Espaciado interno */
 }
 
-.large-nav-link {
-    font-size: 1rem; /* Tamaño de fuente más grande */
-    text-align:center;
-    color: var(--primary-color); /* Color del texto */
-    transition: background-color 0.3s, color 0.3s; /* Animación para hover */
+body .mud-nav-link {
+    font-size: 1rem;
+    text-align: center;
+    color: var(--secondary-color);
+    background: var(--primary-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.large-nav-link:hover {
-    background-color:var(--secondary-color); /* Color de fondo al pasar el ratón */
-    color: #000; /* Color del texto al pasar el ratón */
-    border-radius: 4px; /* Bordes redondeados */
+body .mud-nav-link:hover,
+body .mud-nav-link:active,
+body .mud-nav-link:focus {
+    color: var(--primary-color) !important;
+    background: var(--secondary-color) !important;
+}
+.mud-navmenu.mud-navmenu-default .mud-nav-link.active:not(.mud-nav-link-disabled) {
+    color: var(--primary-color) !important; /* Your custom text color */
+    background-color: var(--secondary-color) !important; /* Your custom background color */
+    font-size: 1rem !important;
+    text-align: center !important;
+    transition: background-color 0.3s, color 0.3s !important;
 }
 
-/**/
+
+
+    /**/

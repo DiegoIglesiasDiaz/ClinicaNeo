@@ -30,7 +30,7 @@
         {
             <!-- Show login form if the user is not authenticated -->
             <div style="padding:20px">
-                <MudText Typo="Typo.h6" Align="Align.Center">Iniciar Sesión</MudText>
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Iniciar Sesión</MudText>
 
                 <MudForm @ref="loginForm" Class="login-form">
                     <MudTextField Label="Usuario" @bind-Value="user.Username" Variant="Variant.Text" InputType="InputType.Email" />
@@ -82,10 +82,12 @@
                     Success = "#2ECC40",
                     Warning = "#FFC107",
                     Error = "#FF0000",
-                    Background = "#5d3928ff",
+                    Background = "#FFFFFF",
                     Surface = "#FFFFFF",
                     TextPrimary = "#5d3928ff",
                     TextSecondary = "#5d3928ff",
+                    DrawerBackground = "#FFFFFF",
+                    
                 }
             }
     };
