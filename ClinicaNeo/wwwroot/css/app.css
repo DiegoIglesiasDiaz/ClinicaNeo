@@ -123,7 +123,8 @@ code {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top:5vh;
+    margin-bottom:5vh;
 }
 
 @media (max-width: 641px) {
