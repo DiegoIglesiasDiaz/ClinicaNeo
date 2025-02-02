@@ -30,7 +30,7 @@
         {
             <!-- Show login form if the user is not authenticated -->
             <div style="padding:20px">
-                <MudText Typo="Typo.h6" Align="Align.Center">Iniciar Sesión</MudText>
+                <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Primary">Iniciar Sesión</MudText>
 
                 <MudForm @ref="loginForm" Class="login-form">
                     <MudTextField Label="Usuario" @bind-Value="user.Username" Variant="Variant.Text" InputType="InputType.Email" />
@@ -82,17 +82,19 @@
                     Success = "#2ECC40",
                     Warning = "#FFC107",
                     Error = "#FF0000",
-                    Background = "#5d3928ff",
+                    Background = "#FFFFFF",
                     Surface = "#FFFFFF",
                     TextPrimary = "#5d3928ff",
                     TextSecondary = "#5d3928ff",
+                    DrawerBackground = "#FFFFFF",
+                    
                 }
             }
     };
 
     [Inject] private ISnackbar snackbar { get; set; }
     [Inject] private HttpClient httpClient { get; set; }
-    [Inject] private AuthenticationStateProvider authenticationStateProvider { get; set; }
+    [Inject] private CustomAuthenticationStateProvider authenticationStateProvider { get; set; }
     [Inject] private NavigationManager navigation { get; set; }
 
 
@@ -124,30 +126,42 @@
 
         try
         {
-            // Assuming you have an API endpoint that processes the login
-            var result = await httpClient.PostAsJsonAsync("api/User", user);
+            // Send the login request to the backend
+            var response = await httpClient.PostAsJsonAsync("api/User/Login", user);
 
-            if (result.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                // Handle successful login here
-                snackbar.Add("¡Bienvenido!", Severity.Success);
-                isAuthenticated = true;
+                // Extract the JWT token from the response
+                var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                if (responseBody != null && responseBody.TryGetValue("token", out var token))
+                {
+
+                    // Notify the authentication state provider
+                    await authenticationStateProvider.LoginAsync(token);
+
+                    snackbar.Add("¡Bienvenido!", Severity.Success);
+                    isAuthenticated = true;
+                    // Optionally, redirect the user or perform other actions
+                }
+                else
+                {
+                    snackbar.Add("No se pudo recuperar el token de autenticación", Severity.Error);
+                }
             }
             else
             {
-                // Handle error from server (invalid credentials, etc.)
                 snackbar.Add("Credenciales inválidas", Severity.Error);
             }
         }
         catch (Exception ex)
         {
-            // Handle errors like network failure
             snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
     }
+
     private async Task HandleLogout()
     {
-        // await authenticationStateProvider.LogoutAsync();
+        await authenticationStateProvider.LogoutAsync();
         isAuthenticated = false;
         snackbar.Add("Has cerrado sesión correctamente.", Severity.Info);
 

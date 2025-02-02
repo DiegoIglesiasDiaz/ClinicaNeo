@@ -48,21 +48,6 @@ namespace ClinicaNeo.Pages
             }
         }
 
-        private string ValidateDniNie(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return "El campo DNI/NIE es obligatorio.";
-
-            var nifRegex = new Regex(@"^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$", RegexOptions.IgnoreCase);
-            var nieRegex = new Regex(@"^[XYZ][0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKE]$", RegexOptions.IgnoreCase);
-
-            if (!nifRegex.IsMatch(input) && !nieRegex.IsMatch(input))
-                return "El DNI o NIE introducido no es válido.";
-
-            return null; // Si pasa las validaciones, no hay error.
-        }
-
-
         private string ValidatePhone(string input)
         {
             if (string.IsNullOrEmpty(input))

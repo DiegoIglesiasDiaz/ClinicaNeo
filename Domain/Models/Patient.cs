@@ -13,7 +13,7 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surnames { get; set; }
-        public string Dni { get; set; }
+        public string Notes { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public List<Appointment> Appointments { get; set; }
@@ -26,7 +26,6 @@ namespace Domain.Models
         {
          if (String.IsNullOrEmpty(Name)) return false;
          if (String.IsNullOrEmpty(Surnames)) return false;
-         if (String.IsNullOrEmpty(Dni) || !IsValidDniNie(Dni)) return false;
          if (String.IsNullOrEmpty(Phone) || !IsValidPhone(Phone)) return false;
          if (String.IsNullOrEmpty(Email) || !IsValidEmail(Email)) return false;
          return true;
@@ -37,21 +36,6 @@ namespace Domain.Models
             var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]");
             return emailRegex.IsMatch(email);
         }
-        private bool IsValidDniNie(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return false;
-
-            var nifRegex = new Regex(@"^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKE]$", RegexOptions.IgnoreCase);
-            var nieRegex = new Regex(@"^[XYZ][0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKE]$", RegexOptions.IgnoreCase);
-
-            if (!nifRegex.IsMatch(input) && !nieRegex.IsMatch(input))
-                return false;
-
-            return true; // Si pasa las validaciones, no hay error.
-        }
-
-
         private bool IsValidPhone(string input)
         {
             if (string.IsNullOrEmpty(input))

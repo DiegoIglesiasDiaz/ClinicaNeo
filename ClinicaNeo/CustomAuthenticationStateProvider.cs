@@ -32,7 +32,10 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async Task LoginAsync(string token)
     {
-        // Notifica el cambio de estado de autenticación
+        // Store the token in localStorage
+        await _localStorageService.SetItemAsync("authToken", token);
+
+        // Notify the application about the authentication state change
         var authState = GetAuthenticationStateAsync();
         NotifyAuthenticationStateChanged(authState);
     }
