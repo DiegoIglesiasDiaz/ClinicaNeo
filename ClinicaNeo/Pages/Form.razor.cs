@@ -48,6 +48,25 @@ namespace ClinicaNeo.Pages
             }
         }
 
+        [Parameter]
+        public string AppointmentNotes { get; set; }
+        [Parameter]
+        public EventCallback<string> AppointmentNotesChanged { get; set; }
+
+        private string InternalAppointmentNotes
+        {
+            get => AppointmentNotes;
+            set
+            {
+                if (AppointmentNotes != value)
+                {
+                    AppointmentNotes = value;
+                    AppointmentNotesChanged.InvokeAsync(value);
+                }
+            }
+        }
+
+
         private string ValidatePhone(string input)
         {
             if (string.IsNullOrEmpty(input))

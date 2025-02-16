@@ -1,0 +1,50 @@
+﻿@inject Radzen.DialogService DialogService
+
+<RadzenTemplateForm TItem="Appointment" Data="@model" Submit=@OnSubmit>
+    <RadzenStack Gap="1rem">
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Wrap="FlexWrap.Wrap">
+            <RadzenLabel Text="Paciente" Style="width: 6rem;" />
+            <RadzenText Text="@model.Patient.FullName" Style="width: 12rem;" />
+        </RadzenStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Wrap="FlexWrap.Wrap">
+            <RadzenLabel Text="Email" Style="width: 6rem;" />
+            <RadzenText Text="@model.Patient.Email" Style="width: 12rem;" />
+        </RadzenStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Wrap="FlexWrap.Wrap">
+            <RadzenLabel Text="Teléfono" Style="width: 6rem;" />
+            <RadzenText Text="@model.Patient.Phone" Style="width: 12rem;" />
+        </RadzenStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Wrap="FlexWrap.Wrap">
+            <RadzenText Text="@($"Cita el dia {model.Date.ToString("D")} - {model.StartTime.ToString(@"hh\:mm")}h a {model.EndTime.ToString(@"hh\:mm")}h.")" />
+        </RadzenStack>
+
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Wrap="FlexWrap.Wrap">
+            <RadzenText Text="@(model.Notes)" />
+        </RadzenStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+            @if(model.EndDateTime > DateTime.Now){
+                <RadzenButton ButtonStyle="ButtonStyle.Danger" Click="CancelAppointment" Text="Cancelar Cita" />
+            }          
+            <RadzenButton ButtonType="Radzen.ButtonType.Submit" Text="Cerrar" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+@code {
+    [Parameter]
+    public Appointment Appointment { get; set; }
+
+    Appointment model = new Appointment();
+
+    protected override void OnParametersSet()
+    {
+        model = Appointment;
+    }
+    void CancelAppointment(){
+        model.Status = Domain.Enums.AppointmentStatus.Cancelled;
+        DialogService.Close(model);
+    }
+    void OnSubmit(Appointment model)
+    {
+        DialogService.Close(model);
+    }
+}

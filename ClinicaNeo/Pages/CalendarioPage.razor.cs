@@ -1,7 +1,12 @@
 ﻿using Domain.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Radzen.Blazor;
+using Radzen;
 using System.Net.Http.Json;
+using Domain.Enums;
+using System;
+using MudBlazor;
 
 namespace ClinicaNeo.Pages
 {
@@ -10,73 +15,33 @@ namespace ClinicaNeo.Pages
         [Inject]
         public HttpClient _httpClient { get; set; }
         [Inject]
-        IJSRuntime JSRuntime { get; set; }
-        [Parameter]
-        public DateTime? SelectedDate { get; set; }
-        private int displayMonths;
-        private double windowWidth;
-        private List<NonWorkingDay> nonWorkingDays = new List<NonWorkingDay>();
-        private List<DateTime> bookedDates = new List<DateTime>();
-        private DateTime? internalSelectedDate
-        {
-            get => SelectedDate;
-            set
-            {
-                if (SelectedDate != value)
-                {
-                    SelectedDate = value;
-                    SelectedDateChanged.InvokeAsync(value); // Notify the parent component
-                }
-            }
-        }
-        [Parameter]
-        public EventCallback<DateTime?> SelectedDateChanged { get; set; }
-        private void UpdateDisplayMonths()
-        {
-            // Cambiar el valor basado en el tamaño de la pantalla
-            if (windowWidth >= 640)  // Pantalla de escritorio
-            {
-                displayMonths = 2;
-            }
-            else
-            {
-                displayMonths = 1; // Móvil o tablet
-            }
-        }
+        ISnackbar Snackbar { get; set; }
+        public IList<Appointment> Appointments { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            // Determinar el número de meses a mostrar según el tamaño de la pantalla
-            // Preload non-working days
             try
             {
-                nonWorkingDays = await _httpClient.GetFromJsonAsync<List<NonWorkingDay>>("api/NonWorkingDay");
-                bookedDates = await _httpClient.GetFromJsonAsync<List<DateTime>>("api/Appointment/BookedDates");
+                Appointments = await _httpClient.GetFromJsonAsync<List<Appointment>>("api/Appointment");
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error fetching non-working days: {ex.Message}");
+                Console.Error.WriteLine($"Error fetching appointments: {ex.Message}");
             }
-            UpdateDisplayMonths();
         }
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<Appointment> args)
         {
-            if (firstRender)
+            Appointment? data = await DialogService.OpenAsync<EditAppointmentPage>("Cita", new Dictionary<string, object> { { "Appointment", args.Data } });
+            if (data != null && data.Status == AppointmentStatus.Cancelled)
             {
-                // Obtener el ancho de la ventana desde JavaScript
-                windowWidth = await JSRuntime.InvokeAsync<double>("eval", "window.innerWidth");
-                UpdateDisplayMonths();
-                StateHasChanged();
+                await _httpClient.PutAsJsonAsync<Appointment>("api/Appointment",data);
+                Snackbar.Add("Cita Cancelada Correctamente.", Severity.Success);
+                Appointments.Remove(args.Data);
             }
+
+            await scheduler.Reload();
         }
-        private bool IsDateDisabledFunc(DateTime date)
-        {
-            if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
-                return true;
-            if (nonWorkingDays.Any(nwd => nwd.Date.Date == date.Date))
-                return true;
-            if (bookedDates.Any(bk => bk.Date.Date == date.Date))
-                return true;
-            return false;
-        }
+
     }
+
 }

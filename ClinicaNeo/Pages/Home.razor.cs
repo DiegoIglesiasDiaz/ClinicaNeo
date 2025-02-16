@@ -17,6 +17,7 @@ namespace ClinicaNeo.Pages
         ScheduleComponent scheduleComponent;
         DateTime? selectedDate;
         Schedule? selectedHour;
+        string appointmentNotes;
         Patient patient = new Patient();
         int _index;
         bool _completed;
@@ -79,7 +80,7 @@ namespace ClinicaNeo.Pages
             {
                 if (ConditionsCheckbox)
                 {
-                    var newAppointment = new Appointment((DateTime)selectedDate, selectedHour, patient, Domain.Enums.AppointmentStatus.Scheduled);
+                    var newAppointment = new Appointment((DateTime)selectedDate, selectedHour, patient, Domain.Enums.AppointmentStatus.Scheduled,appointmentNotes);
                     var response = await _httpClient.PostAsJsonAsync<Appointment>("api/Appointment", newAppointment);
                     _completed = true;
                     await stepper.NextStepAsync();

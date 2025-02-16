@@ -1,10 +1,13 @@
 using Blazored.LocalStorage;
 using ClinicaNeo;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using MudBlazor.Translations;
+using Radzen;
+using System.Globalization;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -19,7 +22,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(webApiUr
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 
-
+builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<Radzen.ThemeService>();
 
 // Other services registration
 builder.Services.AddBlazoredLocalStorage();
@@ -28,6 +32,15 @@ builder.Services.AddMudTranslations();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 
-var app = builder.Build();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("es-ES")
+    };
 
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+var app = builder.Build();
 await app.RunAsync();

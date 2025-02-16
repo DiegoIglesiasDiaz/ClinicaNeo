@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -13,9 +14,11 @@ namespace Domain.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Surnames { get; set; }
-        public string Notes { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public string FullName => Name +" "+ Surnames;
+
+        [JsonIgnore]
         public List<Appointment> Appointments { get; set; }
         public Patient()
         {
