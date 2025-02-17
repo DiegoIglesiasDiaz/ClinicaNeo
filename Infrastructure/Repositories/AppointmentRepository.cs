@@ -33,6 +33,10 @@ public class AppointmentRepository : IAppointmentRepository
     {
         return _context.Appointments.SingleOrDefault(u => u.Id == id);
     }
+    public List<Appointment>? GetAll()
+    {
+        return _context.Appointments.Where(x=> x.Status != AppointmentStatus.Cancelled).ToList();
+    }
 
     public async Task<bool> IsAppointmentAvailableAsync(Appointment appointment)
     {

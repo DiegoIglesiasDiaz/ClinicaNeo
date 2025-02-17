@@ -16,7 +16,7 @@ namespace Infrastructure
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<NonWorkingDay> NonWorkingDays { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-       
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,10 @@ namespace Infrastructure
             modelBuilder.Entity<Appointment>()
                 .Property(u => u.Status)
                 .HasConversion(AppointmentStatusConverter);
+
+            modelBuilder.Entity<Appointment>()
+                .Navigation(a => a.Patient)
+                .AutoInclude();
 
         }
     }

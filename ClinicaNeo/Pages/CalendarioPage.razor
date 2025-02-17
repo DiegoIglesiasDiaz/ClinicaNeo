@@ -1,3 +1,20 @@
-﻿@page "/Calendario"
-<h1>Calendario</h1>
+﻿@page "/Calendario";
+@inject Radzen.DialogService DialogService
+<RadzenScheduler Style="width:-webkit-fill-available; height:90vh" @ref="scheduler"
+TItem="Appointment"
+Data="Appointments"
+StartProperty="StartDateTime"
+EndProperty="EndDateTime" 
+TextProperty="Patient.FullName"
+SelectedIndex="1"
+AppointmentSelect="OnAppointmentSelect">
+    <RadzenDayView />
+    <RadzenWeekView />
+    <RadzenMonthView />
+</RadzenScheduler>
 
+
+
+@code {
+    RadzenScheduler<Appointment> scheduler;   
+}

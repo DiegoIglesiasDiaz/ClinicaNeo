@@ -12,7 +12,7 @@
                               @bind-Value="InternalPatient.Phone" />
                 <MudTextField T="string" Label="Email" Required="true" RequiredError="Introduzca su Email" @bind-Value="InternalPatient.Email"
                               Validation="@(new EmailAddressAttribute() { ErrorMessage = "Email no válido" })" />
-                <MudTextField T="string" Label="Motivo de Cita" Required="false" Lines="4" @bind-Value="InternalPatient.Notes" />
+                <MudTextField T="string" Label="Motivo de Cita" Required="false" Lines="4" @bind-Value="InternalAppointmentNotes" />
                 <div class="d-flex align-center justify-space-between">
                     <MudCheckBox T="bool" Required="true" RequiredError="Debes de Aceptar las Condiciones de Uso"
                                  Label="¿Aceptas los términos y condiciones de uso?" @bind-Value="InternalConditionsCheckbox" />

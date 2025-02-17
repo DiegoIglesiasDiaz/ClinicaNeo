@@ -12,7 +12,7 @@ public class AppointmentController : ControllerBase
     private readonly INonWorkingDayRepository _NonWorkingDayRepository;
     private readonly IScheduleRepository _ScheduleRepository;
 
-    public AppointmentController(IAppointmentRepository AppointmentService, INonWorkingDayRepository NonWorkingDayRepository, IScheduleRepository ScheduleRepository )
+    public AppointmentController(IAppointmentRepository AppointmentService, INonWorkingDayRepository NonWorkingDayRepository, IScheduleRepository ScheduleRepository)
     {
         _AppointmentService = AppointmentService;
         _NonWorkingDayRepository = NonWorkingDayRepository;
@@ -46,17 +46,11 @@ public class AppointmentController : ControllerBase
     {
         try
         {
-            updateAppointment.Validate();   
-            if (await ValidateAppointmentAsync(updateAppointment))
-            {
-                _AppointmentService.Update(updateAppointment);
-                return NoContent();
-            }
-            else
-            {
-                return BadRequest("This Appointment has been already booked");
-            }
-           
+            updateAppointment.Validate();
+            _AppointmentService.Update(updateAppointment);
+            return NoContent();
+
+
         }
         catch (Exception ex)
         {
@@ -71,6 +65,19 @@ public class AppointmentController : ControllerBase
         {
             var Appointment = _AppointmentService.GetById(id);
             return Ok(Appointment);
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+    [HttpGet()]
+    public IActionResult GetAll()
+    {
+        try
+        {
+            var ListAppointment = _AppointmentService.GetAll();
+            return Ok(ListAppointment);
         }
         catch (Exception ex)
         {

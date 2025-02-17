@@ -11,7 +11,7 @@
                 <ScheduleComponent @bind-HoraSeleccionada="selectedHour" @ref=scheduleComponent />
             </MudStep>
             <MudStep Skippable="false" Title="Datos Personales" Completed="@(_completed)">
-                <Form @bind-patient="patient" @bind-ConditionsCheckbox="ConditionsCheckbox" />
+                <Form @bind-patient="patient" @bind-ConditionsCheckbox="ConditionsCheckbox" @bind-AppointmentNotes="appointmentNotes" />
             </MudStep>
         </ChildContent>
         <ActionContent Context="stepper">
