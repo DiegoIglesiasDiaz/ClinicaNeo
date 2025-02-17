@@ -3,29 +3,29 @@
 
 <div class="page">
     <div class="button-container">
-        @if (showMudPickerTheme){
+        @if (showMudPickerTheme)
+        {
             <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
             <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
         }
-       
-        <MudButton Class="back-toggle-button" StartIcon="@Icons.Material.Filled.ArrowBack" Href="https://centrodetecnicasnaturalesneo.com/">
-            Volver
-        </MudButton>
-
-        <MudButton OnClick="ToggleDrawer" Class="drawer-toggle-button" Variant="MudBlazor.Variant.Text">
-            @if (isAuthenticated)
-            {
+        @if (isAuthenticated)
+        {
+            <MudButton Class="back-toggle-button" StartIcon="@Icons.Material.Filled.ArrowBack" Href="https://centrodetecnicasnaturalesneo.com/">
+                Volver
+            </MudButton>
+            <MudButton OnClick="ToggleDrawer" Class="drawer-toggle-button" Variant="MudBlazor.Variant.Text">
                 <MudIcon Icon="@Icons.Material.Filled.Menu" />
-            }
-            else
-            {
+            </MudButton>
+        }
+        else
+        {
+            <MudButton OnClick="ToggleDrawer" Class="drawer-toggle-button" Variant="MudBlazor.Variant.Text">
                 <MudIcon Icon="@Icons.Material.Filled.Lock" />
-            }
-
-        </MudButton>
+            </MudButton>
+        }
     </div>
 
-    <MudDrawer @bind-Open="isDrawerOpen" Anchor="Anchor.Left" Elevation="4" Variant="DrawerVariant.Temporary">
+    <MudDrawer @bind-Open="isDrawerOpen" Anchor="Anchor.Left" Elevation="4" Variant="DrawerVariant.Temporary" Style="height:100vh">
         @if (!isAuthenticated)
         {
             <!-- Show login form if the user is not authenticated -->
@@ -71,7 +71,8 @@
 <MudThemeProvider Theme="_themeManager.Theme" />
 
 @code {
-    private ThemeManagerTheme _themeManager = new ThemeManagerTheme(){
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme()
+        {
             Theme = new()
             {
                 PaletteLight = new PaletteLight
@@ -87,10 +88,10 @@
                     TextPrimary = "#5d3928ff",
                     TextSecondary = "#5d3928ff",
                     DrawerBackground = "#FFFFFF",
-                    
+
                 }
             }
-    };
+        };
 
     [Inject] private ISnackbar snackbar { get; set; }
     [Inject] private HttpClient httpClient { get; set; }
@@ -171,7 +172,7 @@
 
 
 
-#region MUdBlazorPick Theme
+    #region MUdBlazorPick Theme
     public bool _themeManagerOpen = false;
 
     void OpenThemeManager(bool value)
@@ -189,5 +190,5 @@
     {
         StateHasChanged();
     }
-#endregion
+    #endregion
 }

@@ -296,6 +296,7 @@ code {
     justify-content: space-between;
     flex-direction: column;
     padding: 35px 0px 35px 15px;
+    height:100vh;
 }
 
 @media (max-width: 641px) {
@@ -305,6 +306,7 @@ code {
         justify-content: space-between;
         flex-direction: row;
         padding: 20px 25px 0 25px;
+        height: unset;
     }
 }
 
