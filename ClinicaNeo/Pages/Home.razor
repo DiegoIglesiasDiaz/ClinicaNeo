@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Globalization 
 
+<MudButton OnClick="OnClickSendEmail" Color="Color.Primary">Enviar Email</MudButton>
 <MudPaper>
     <MudStepper @ref=mudStepper Vertical NonLinear OnPreviewInteraction="OnPreviewInteraction" @bind-ActiveIndex="_index" NextButtonText="Siguiente">
         <ChildContent>

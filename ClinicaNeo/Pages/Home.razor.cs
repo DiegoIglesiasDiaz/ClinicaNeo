@@ -8,7 +8,6 @@ namespace ClinicaNeo.Pages
 {
     public partial class Home
     {
-
         [Inject]
         public HttpClient _httpClient { get; set; }
         [Inject]
@@ -96,6 +95,29 @@ namespace ClinicaNeo.Pages
                 Snackbar.Add("Completa Correctamente los Datos.", Severity.Error);
             }
            
+        }
+        private async Task OnClickSendEmail()
+        {
+            var email = new Email()
+            {
+                Body = "Esto es una prueba de email!!",
+                IsHtml = false,
+                Subject = "Hola Mundo",
+                ToEmail="diegoiglesiasdiaz11@gmail.com"
+            };
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<Email>("api/Email", email);
+                if (result.IsSuccessStatusCode)
+                    Snackbar.Add("Email Enviado Correctamente", Severity.Success);
+                else
+                    Snackbar.Add("Fallo al enviar el email", Severity.Error);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Fallo al enviar el email", Severity.Error);
+            }
+            
         }
     }
 }

@@ -4,6 +4,8 @@ using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.CommunicationService.Interfaces;
+using WebAPI.CommunicationService.Services;
 using WebAPI.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,15 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<INonWorkingDayRepository, NonWorkingDayRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+
+var emailUsername = Environment.GetEnvironmentVariable("EMAIL_USERNAME")
+                            ?? builder.Configuration["EmailSettings:Username"];
+
+var emailPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD")
+                    ?? builder.Configuration["EmailSettings:Password"];
+
+builder.Services.AddSingleton<IEmailService>(new EmailService(emailUsername, emailPassword));
+
 
 builder.Services.AddCors(options =>
 {
